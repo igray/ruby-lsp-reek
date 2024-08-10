@@ -1,0 +1,12 @@
+/.bundle/
+/.direnv/
+/.envrc
+/.yardoc
+/_yardoc/
+/coverage/
+/doc/
+/pkg/
+/spec/reports/
+/tmp/
+
+Gemfile.lock
