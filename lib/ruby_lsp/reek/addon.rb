@@ -7,6 +7,7 @@ require 'ruby_lsp/base_server'
 require 'ruby_lsp/server'
 require 'uri'
 require_relative 'runner'
+require_relative 'version'
 
 module RubyLsp
   module Reek
