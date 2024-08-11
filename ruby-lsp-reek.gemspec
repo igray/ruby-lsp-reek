@@ -29,13 +29,10 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_dependency('reek', '>= 5.0')
-  spec.add_dependency('ruby-lsp', '>= 0.12.0')
-  spec.add_dependency('sorbet-runtime', '>= 0.5.5685')
+  spec.add_dependency('reek', '~> 6.0', '>= 5.0')
+  spec.add_dependency('ruby-lsp', '~> 0.17', '>= 0.12.0')
+  spec.add_dependency('sorbet-runtime', '~> 0.5', '>= 0.5.5685')
 
-  # For more information and examples about making a new gem, check out our
-  # guide at: https://bundler.io/guides/creating_gem.html
-  spec.add_development_dependency 'bundler', '~> 2.4'
   spec.add_development_dependency 'minitest', '~> 5.20'
   spec.add_development_dependency 'pry', '~> 0.14'
   spec.add_development_dependency 'rake', '~> 13.1'
