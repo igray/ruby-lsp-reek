@@ -73,39 +73,36 @@ class RubyLspAddonTest < Minitest::Test
   def with_server(
     source = nil,
     path = "fake.rb",
-    pwd: "test/fixture/ruby_lsp",
     stub_no_typechecker: false,
     load_addons: true,
     &block
   )
-    Dir.chdir pwd do
-      server = RubyLsp::Server.new(test_mode: true)
-      uri = Kernel.URI(File.join(server.global_state.workspace_path, path))
-      server.global_state.instance_variable_set(:@linters, ["reek"])
-      server.global_state.stubs(:typechecker).returns(false) if stub_no_typechecker
+    server = RubyLsp::Server.new(test_mode: true)
+    uri = Kernel.URI(File.join(server.global_state.workspace_path, path))
+    server.global_state.instance_variable_set(:@linters, ["reek"])
+    server.global_state.stubs(:typechecker).returns(false) if stub_no_typechecker
 
-      if source
-        server.process_message(
-          {
-            method: "textDocument/didOpen",
-            params: {
-              textDocument: {
-                uri:,
-                text: source,
-                version: 1
-              }
+    if source
+      server.process_message(
+        {
+          method: "textDocument/didOpen",
+          params: {
+            textDocument: {
+              uri:,
+              text: source,
+              version: 1
             }
           }
-        )
-      end
-
-      server.global_state.index.index_single(
-        RubyIndexer::IndexablePath.new(nil, uri.to_standardized_path),
-        source
+        }
       )
-      server.load_addons if load_addons
-      block.call(server, uri)
     end
+
+    server.global_state.index.index_single(
+      RubyIndexer::IndexablePath.new(nil, uri.to_standardized_path),
+      source
+    )
+    server.load_addons if load_addons
+    block.call(server, uri)
   ensure
     if load_addons
       RubyLsp::Addon.addons.each(&:deactivate)
