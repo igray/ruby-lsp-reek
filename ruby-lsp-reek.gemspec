@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.authors = ["Iain Gray"]
   spec.email = ["igray@igraycon.com"]
 
-  spec.summary = "Ruby LSP Reek"
+  spec.summary = "Reek addon for Ruby-LSP"
   spec.description = "An addon for Ruby LSP that enables linting with reek"
   spec.homepage = "https://github.com/igray/ruby-lsp-reek"
   spec.license = "MIT"
