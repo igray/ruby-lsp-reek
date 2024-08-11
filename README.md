@@ -14,7 +14,8 @@ And then execute:
 
     $ bundle
 
-Or install it yourself as:
+Note: `ruby-lsp` does not seem to recognize this addon when installed outside
+of bundler, but YMMV:
 
     $ gem install ruby-lsp-reek
 
