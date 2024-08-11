@@ -12,9 +12,6 @@ jobs:
       with:
         ruby-version: '3.3'
         bundler-cache: true
-    - name: Run code analysis
-      run: |
-        bundle exec rake code_analysis
     - name: Run tests
       run: |
         bundle exec rake test

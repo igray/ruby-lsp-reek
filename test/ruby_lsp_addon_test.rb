@@ -1,24 +1,24 @@
-$LOAD_PATH.unshift(File.expand_path('../lib', __dir__))
+$LOAD_PATH.unshift(File.expand_path("../lib", __dir__))
 
-require 'bundler/setup'
-require 'minitest/autorun'
-require 'sorbet-runtime'
-require 'core_ext/uri'
-require 'language_server-protocol'
-require 'ruby_indexer/ruby_indexer'
-require 'ruby_lsp/addon'
-require 'ruby_lsp/base_server'
-require 'ruby_lsp/server'
-require 'ruby_lsp/requests'
-require 'ruby_lsp/utils'
-require 'ruby_lsp/store'
-require 'ruby_lsp/document'
-require 'ruby_lsp/global_state'
-require 'ruby_lsp/ruby_document'
-require 'ruby_lsp/type_inferrer'
-require 'prism'
-require 'pry'
-require 'ruby_lsp/reek/addon'
+require "bundler/setup"
+require "minitest/autorun"
+require "sorbet-runtime"
+require "core_ext/uri"
+require "language_server-protocol"
+require "ruby_indexer/ruby_indexer"
+require "ruby_lsp/addon"
+require "ruby_lsp/base_server"
+require "ruby_lsp/server"
+require "ruby_lsp/requests"
+require "ruby_lsp/utils"
+require "ruby_lsp/store"
+require "ruby_lsp/document"
+require "ruby_lsp/global_state"
+require "ruby_lsp/ruby_document"
+require "ruby_lsp/type_inferrer"
+require "prism"
+require "pry"
+require "ruby_lsp/reek/addon"
 
 class RubyLspAddonTest < Minitest::Test
   def setup
@@ -27,7 +27,7 @@ class RubyLspAddonTest < Minitest::Test
   end
 
   def test_name
-    assert_equal 'Reek: Code smell detector for Ruby', @addon.name
+    assert_equal "Reek: Code smell detector for Ruby", @addon.name
   end
 
   def test_diagnostic
@@ -37,10 +37,10 @@ class RubyLspAddonTest < Minitest::Test
         puts s
       end
     RUBY
-    with_server(source, 'simple.rb') do |server, uri|
+    with_server(source, "simple.rb") do |server, uri|
       server.process_message(
         id: 2,
-        method: 'textDocument/diagnostic',
+        method: "textDocument/diagnostic",
         params: {
           textDocument: {
             uri:
@@ -51,30 +51,29 @@ class RubyLspAddonTest < Minitest::Test
       result = server.pop_response
 
       assert_instance_of(RubyLsp::Result, result)
-      assert_equal 'full', result.response.kind
+      assert_equal "full", result.response.kind
       assert_equal 1, result.response.items.size
       item = result.response.items.first
-      assert_equal({ line: 1, character: 0 }, item.range.start.to_hash)
-      assert_equal({ line: 1, character: 0 }, item.range.end.to_hash)
+      assert_equal({line: 1, character: 0}, item.range.start.to_hash)
+      assert_equal({line: 1, character: 0}, item.range.end.to_hash)
       assert_equal RubyLsp::Constant::DiagnosticSeverity::WARNING, item.severity
-      assert_equal 'UncommunicativeVariableName', item.code
+      assert_equal "UncommunicativeVariableName", item.code
       assert_equal(
-        'https://github.com/troessner/reek/blob/v6.3.0/docs/Uncommunicative-Variable-Name.md',
+        "https://github.com/troessner/reek/blob/v6.3.0/docs/Uncommunicative-Variable-Name.md",
         item.code_description.href
       )
-      assert_equal 'Reek', item.source
+      assert_equal "Reek", item.source
       assert_equal("has the variable name 's'", item.message)
     end
   end
 
   private
 
-  # Lifted from here, because we need to override the formatter to "standard" in the test helper:
-  # https://github.com/Shopify/ruby-lsp/blob/4c1906172add4d5c39c35d3396aa29c768bfb898/lib/ruby_lsp/test_helper.rb#L20
+  # Overridden from RubyLsp/TestHelper so that we can override the linters configuration
   def with_server(
     source = nil,
-    path = 'fake.rb',
-    pwd: 'test/fixture/ruby_lsp',
+    path = "fake.rb",
+    pwd: "test/fixture/ruby_lsp",
     stub_no_typechecker: false,
     load_addons: true,
     &block
@@ -82,13 +81,13 @@ class RubyLspAddonTest < Minitest::Test
     Dir.chdir pwd do
       server = RubyLsp::Server.new(test_mode: true)
       uri = Kernel.URI(File.join(server.global_state.workspace_path, path))
-      server.global_state.instance_variable_set(:@linters, ['reek'])
+      server.global_state.instance_variable_set(:@linters, ["reek"])
       server.global_state.stubs(:typechecker).returns(false) if stub_no_typechecker
 
       if source
         server.process_message(
           {
-            method: 'textDocument/didOpen',
+            method: "textDocument/didOpen",
             params: {
               textDocument: {
                 uri:,

@@ -10,6 +10,6 @@ Rake::TestTask.new(:test) do |t|
 end
 
 task :code_analysis do
-  sh 'bundle exec standardrb lib test'
-  sh 'bundle exec reek lib'
+  sh "bundle exec standardrb lib test"
+  sh "bundle exec reek lib"
 end

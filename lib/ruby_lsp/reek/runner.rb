@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'reek'
+require "reek"
 
 module RubyLsp
   module Reek
@@ -27,7 +27,7 @@ module RubyLsp
         return [] if config.path_excluded?(Pathname.new(uri.path))
 
         examiner = ::Reek::Examiner.new(document.source, configuration: config)
-        examiner.smells.map { |w| warning_to_diagnostic(w) }
+        examiner.smells.map { |smell| warning_to_diagnostic(smell) }
       end
 
       private
@@ -37,21 +37,22 @@ module RubyLsp
       # @param warning [Reek::SmellWarning] The warning to convert to a diagnostic.
       # @return [RubyLsp::Interface::Diagnostic] The diagnostic.
       def warning_to_diagnostic(warning)
+        lines = warning.lines
         ::RubyLsp::Interface::Diagnostic.new(
           range: ::RubyLsp::Interface::Range.new(
             start: ::RubyLsp::Interface::Position.new(
-              line: warning.lines.first - 1,
+              line: lines.first - 1,
               character: 0
             ),
             end: ::RubyLsp::Interface::Position.new(
-              line: warning.lines.last - 1,
+              line: lines.last - 1,
               character: 0
             )
           ),
           severity: Constant::DiagnosticSeverity::WARNING,
           code: warning.smell_type,
           code_description: ::RubyLsp::Interface::CodeDescription.new(href: warning.explanatory_link),
-          source: 'Reek',
+          source: "Reek",
           message: warning.message
         )
       end
