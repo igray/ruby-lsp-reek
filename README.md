@@ -14,10 +14,9 @@ And then execute:
 
     $ bundle
 
-Note: `ruby-lsp` does not seem to recognize this addon when installed outside
-of bundler, but YMMV:
-
-    $ gem install ruby-lsp-reek
+Note: Using globally installed linters in Ruby LSP is [not
+supported](https://github.com/Shopify/ruby-lsp/blob/main/vscode/README.md#formatting),
+they must in your Gemfile or gemspec.
 
 ## Usage
 
