@@ -24,9 +24,10 @@ module RubyLsp
       # @param uri [String] The URI of the document to run diagnostics on.
       # @param document [RubyLsp::Interface::TextDocumentItem] The document to run diagnostics on.
       def run_diagnostic(uri, document)
-        return [] if config.path_excluded?(Pathname.new(uri.path))
+        path = Pathname.new(uri.path)
+        return [] if path_excluded?(path)
 
-        examiner = ::Reek::Examiner.new(document.source, configuration: config)
+        examiner = ::Reek::Examiner.new(path, configuration: config)
         examiner.smells.map { |smell| warning_to_diagnostic(smell) }
       end
 
@@ -55,6 +56,14 @@ module RubyLsp
           source: "Reek",
           message: warning.message
         )
+      end
+
+      def path_excluded?(path)
+        path.ascend do |ascendant|
+          break true if config.path_excluded?(ascendant)
+
+          false
+        end
       end
     end
   end

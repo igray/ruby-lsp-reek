@@ -3,13 +3,17 @@ $LOAD_PATH.unshift(File.expand_path("../lib", __dir__))
 require "bundler/setup"
 require "minitest/autorun"
 require "sorbet-runtime"
+require "uri"
 require "core_ext/uri"
 require "language_server-protocol"
 require "ruby_indexer/ruby_indexer"
 require "ruby_lsp/addon"
 require "ruby_lsp/base_server"
+require "ruby_lsp/client_capabilities"
 require "ruby_lsp/server"
-require "ruby_lsp/requests"
+require "ruby_lsp/requests/request"
+require "ruby_lsp/requests/diagnostics"
+require "ruby_lsp/requests/support/formatter"
 require "ruby_lsp/utils"
 require "ruby_lsp/store"
 require "ruby_lsp/document"
@@ -83,6 +87,7 @@ class RubyLspAddonTest < Minitest::Test
     server.global_state.stubs(:typechecker).returns(false) if stub_no_typechecker
 
     if source
+      File.write(uri.to_s, source)
       server.process_message(
         {
           method: "textDocument/didOpen",
@@ -104,6 +109,7 @@ class RubyLspAddonTest < Minitest::Test
     server.load_addons if load_addons
     block.call(server, uri)
   ensure
+    File.unlink(uri.to_s) if File.exist?(uri.to_s)
     if load_addons
       RubyLsp::Addon.addons.each(&:deactivate)
       RubyLsp::Addon.addons.clear

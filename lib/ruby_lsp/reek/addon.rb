@@ -68,7 +68,7 @@ module RubyLsp
       def workspace_did_change_watched_files(changes)
         return unless changes.any? { |change| change[:uri].end_with?(".reek.yml") }
 
-        runner.init!
+        @runner = Runner.new
         warn "Re-initialized Reek Ruby LSP addon v#{::RubyLsp::Reek::VERSION} due to .reek.yml file change"
       end
 
