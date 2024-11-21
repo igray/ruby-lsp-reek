@@ -87,7 +87,6 @@ class RubyLspAddonTest < Minitest::Test
     server.global_state.stubs(:typechecker).returns(false) if stub_no_typechecker
 
     if source
-      File.write(uri.to_s, source)
       server.process_message(
         {
           method: "textDocument/didOpen",
@@ -109,7 +108,6 @@ class RubyLspAddonTest < Minitest::Test
     server.load_addons if load_addons
     block.call(server, uri)
   ensure
-    File.unlink(uri.to_s) if File.exist?(uri.to_s)
     if load_addons
       RubyLsp::Addon.addons.each(&:deactivate)
       RubyLsp::Addon.addons.clear

@@ -27,13 +27,30 @@ module RubyLsp
         path = Pathname.new(uri.path)
         return [] if path_excluded?(path)
 
-        examiner = ::Reek::Examiner.new(path, configuration: config)
+        examiner = build_examiner(path, document)
         examiner.smells.map { |smell| warning_to_diagnostic(smell) }
       end
 
       private
 
       attr_reader :config
+
+      # Examiner does not allow separate source and origin, but we need to
+      # lint the string from the editor AND know what the filename of the
+      # edited file is. This patches the examiner to allow this.
+      def build_examiner(path, document)
+        examiner = ::Reek::Examiner.new(document.source, configuration: config)
+        origin = ::Reek::Source::SourceCode.from(path).origin
+        examiner.instance_variable_set(:@origin, origin)
+        examiner.instance_variable_set(
+          :@detector_repository,
+          ::Reek::DetectorRepository.new(
+            smell_types: examiner.instance_variable_get(:@smell_types),
+            configuration: config.directive_for(origin)
+          )
+        )
+        examiner
+      end
 
       # @param warning [Reek::SmellWarning] The warning to convert to a diagnostic.
       # @return [RubyLsp::Interface::Diagnostic] The diagnostic.
