@@ -27,7 +27,7 @@ module RubyLsp
         path = Pathname.new(uri.path)
         return [] if path_excluded?(path)
 
-        examiner = ::Reek::Examiner.new(document.source, configuration: config)
+        examiner = ::Reek::Examiner.new(path, configuration: config)
         examiner.smells.map { |smell| warning_to_diagnostic(smell) }
       end
 
